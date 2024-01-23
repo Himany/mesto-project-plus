@@ -36,7 +36,7 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          next(CreateError.badRequest('Пользователь по указанному _id не найден'));
+          next(CreateError.notFound('Пользователь по указанному _id не найден'));
           break;
         default:
           next(error);
@@ -61,7 +61,7 @@ export const updateUserData = (req: Request, res: Response, next: NextFunction) 
           next(CreateError.badRequest('Переданы некорректные данные'));
           break;
         case 'CastError':
-          next(CreateError.badRequest('Пользователь по указанному _id не найден'));
+          next(CreateError.notFound('Пользователь по указанному _id не найден'));
           break;
         default:
           next(error);
@@ -86,7 +86,7 @@ export const updateUserAvatar = (req: Request, res: Response, next: NextFunction
           next(CreateError.badRequest('Переданы некорректные данные'));
           break;
         case 'CastError':
-          next(CreateError.badRequest('Пользователь по указанному _id не найден'));
+          next(CreateError.notFound('Пользователь по указанному _id не найден'));
           break;
         default:
           next(error);
