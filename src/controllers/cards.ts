@@ -4,8 +4,7 @@ import CreateError from '../error/error';
 import Card from '../models/card';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => Card.find({})
-  .populate('owner')
-  .populate('likes')
+  .populate(['owner', 'likes'])
   .then((cards) => res.status(OK).send({ data: cards }))
   .catch(next);
 
@@ -15,7 +14,15 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
 
   return Card.create({ name, link, owner: userId })
     .then((card) => res.status(CREATED).send({ data: card }))
-    .catch(next);
+    .catch((error) => {
+      switch (error.name) {
+        case 'ValidationError':
+          next(CreateError.badRequest('Переданы некорректные данные'));
+          break;
+        default:
+          next(error);
+      }
+    });
 };
 
 export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
@@ -28,7 +35,15 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       }
       res.status(OK).send({ data: card });
     })
-    .catch(next);
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+          next(CreateError.badRequest('Карточка с указанным _id не найдена'));
+          break;
+        default:
+          next(error);
+      }
+    });
 };
 
 export const addLikeCard = (req: Request, res: Response, next: NextFunction) => {
@@ -40,15 +55,22 @@ export const addLikeCard = (req: Request, res: Response, next: NextFunction) => 
     { $addToSet: { likes: userId } }, // добавить _id в массив, если его там нет
     { new: true },
   )
-    .populate('owner')
-    .populate('likes')
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw CreateError.notFound('Карточка с указанным _id не найдена');
       }
       res.status(OK).send({ data: card });
     })
-    .catch(next);
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+          next(CreateError.badRequest('Карточка с указанным _id не найдена'));
+          break;
+        default:
+          next(error);
+      }
+    });
 };
 
 export const deleteLikeCard = (req: Request, res: Response, next: NextFunction) => {
@@ -60,13 +82,20 @@ export const deleteLikeCard = (req: Request, res: Response, next: NextFunction) 
     { $pull: { likes: userId } }, // убрать _id из массива
     { new: true },
   )
-    .populate('owner')
-    .populate('likes')
+    .populate(['owner', 'likes'])
     .then((card) => {
       if (!card) {
         throw CreateError.notFound('Карточка с указанным _id не найдена');
       }
       res.status(OK).send({ data: card });
     })
-    .catch(next);
+    .catch((error) => {
+      switch (error.name) {
+        case 'CastError':
+          next(CreateError.badRequest('Карточка с указанным _id не найдена'));
+          break;
+        default:
+          next(error);
+      }
+    });
 };
