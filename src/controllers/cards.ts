@@ -38,7 +38,7 @@ export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          next(CreateError.notFound('Карточка с указанным _id не найдена'));
+          next(CreateError.badRequest('Передан некорректный идентификатор'));
           break;
         default:
           next(error);
@@ -65,7 +65,7 @@ export const addLikeCard = (req: Request, res: Response, next: NextFunction) => 
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          next(CreateError.notFound('Карточка с указанным _id не найдена'));
+          next(CreateError.badRequest('Передан некорректный идентификатор'));
           break;
         default:
           next(error);
@@ -92,7 +92,7 @@ export const deleteLikeCard = (req: Request, res: Response, next: NextFunction) 
     .catch((error) => {
       switch (error.name) {
         case 'CastError':
-          next(CreateError.notFound('Карточка с указанным _id не найдена'));
+          next(CreateError.badRequest('Передан некорректный идентификатор'));
           break;
         default:
           next(error);
