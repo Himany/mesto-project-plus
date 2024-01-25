@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import { regexUrl } from '../utils/constants';
 
 export interface ICard {
   name: string;
@@ -18,6 +19,10 @@ const cardSchema = new Schema<ICard>({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (v: string) => regexUrl.test(v),
+      message: 'Некорректный URL (Изображение)',
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
