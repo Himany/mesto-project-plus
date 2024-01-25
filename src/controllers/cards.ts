@@ -25,14 +25,22 @@ export const createCard = (req: Request, res: Response, next: NextFunction) => {
     });
 };
 
-export const deleteCard = (req: Request, res: Response, next: NextFunction) => {
+export const deleteCard = async (req: Request, res: Response, next: NextFunction) => {
   const { cardId } = req.params;
+  const userId = (req as any).user._id;
 
-  return Card.findByIdAndDelete(cardId)
+  return Card.findById(cardId)
     .then((card) => {
       if (!card) {
-        throw CreateError.notFound('Карточка с указанным _id не найдена');
+        return Promise.reject(CreateError.notFound('Карточка с указанным _id не найдена'));
       }
+      if (card.owner.toString() !== userId) {
+        return Promise.reject(CreateError.forbidden('Удаление чужой карточки недоступно'));
+      }
+
+      return Card.findByIdAndDelete(cardId);
+    })
+    .then((card) => {
       res.status(OK).send({ data: card });
     })
     .catch((error) => {
