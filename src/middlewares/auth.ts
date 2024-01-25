@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { UNAUTHORIZED } from '../utils/status-code';
 
+const { JWT_KEY = 'MY_SUPER_JWT_KEY' } = process.env;
+
 interface SessionRequest extends Request {
     user?: string | JwtPayload;
 }
@@ -24,7 +26,7 @@ export default (req: SessionRequest, res: Response, next: NextFunction) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, 'super-strong-secret');
+    payload = jwt.verify(token, JWT_KEY);
   } catch (err) {
     return handleAuthError(res);
   }

@@ -5,6 +5,8 @@ import { OK, CREATED } from '../utils/status-code';
 import CreateError from '../error/error';
 import User from '../models/user';
 
+const { JWT_KEY = 'MY_SUPER_JWT_KEY' } = process.env;
+
 export const getUsers = (req: Request, res: Response, next: NextFunction) => User.find({})
   .then((users) => res.status(OK).send({ data: users }))
   .catch(next);
@@ -44,7 +46,7 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        'super-strong-secret',
+        JWT_KEY,
         { expiresIn: '7d' },
       );
 
