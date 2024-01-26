@@ -9,7 +9,7 @@ const router = Router();
 router.get('/', getUsers);
 router.get('/:userId', celebrate({
   params: Joi.object().keys({
-    userId: Joi.string().alphanum(),
+    userId: Joi.string().length(24).hex().required(),
   }),
 }), getUserById);
 router.get('/me', getCurrentUser);
